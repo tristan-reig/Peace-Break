@@ -1,10 +1,13 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'game_state.dart';
 import 'peace_break_game.dart';
 import 'widgets/game_overlays.dart';
 import 'widgets/info_bar.dart';
+import '../../services/profile_controller.dart';
+import '../../services/stage_service.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key, required this.stage, required this.maxLives});
@@ -22,6 +25,39 @@ class _GameScreenState extends State<GameScreen> {
     maxLives: widget.maxLives,
   );
   late final PeaceBreakGame _game = PeaceBreakGame(state: _state);
+
+  StageResult? _result;
+  bool _saving = false;
+  String? _saveError;
+
+  @override
+  void initState() {
+    super.initState();
+    _game.onWin = _save;
+  }
+
+  Future<void> _save() async {
+    setState(() {
+      _saving = true;
+      _saveError = null;
+    });
+    try {
+      final result = await StageService().complete(
+        stage: widget.stage,
+        score: _state.score,
+        coins: _state.coins,
+      );
+      if (!mounted) return;
+      setState(() => _result = result);
+      await context.read<ProfileController>().load();
+    } catch (_) {
+      if (mounted) {
+        setState(() => _saveError = 'Sauvegarde impossible. Réessaie.');
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -73,17 +109,69 @@ class _GameScreenState extends State<GameScreen> {
                     'won': (_, _) => GamePanel(
                       title: 'Stage réussi !',
                       children: [
-                        ScoreLine(label: 'Score', value: '${_state.score}'),
-                        ScoreLine(label: 'Pièces', value: '${_state.coins}'),
+                        ScoreLine(
+                          label: 'Bonus temps',
+                          value: '+${_state.timeBonus}',
+                        ),
+                        ScoreLine(
+                          label: 'Bonus vies',
+                          value: '+${_state.livesBonus}',
+                        ),
+                        ScoreLine(
+                          label: 'Score de la partie',
+                          value: '${_state.score}',
+                        ),
+                        ScoreLine(
+                          label: 'Pièces gagnées',
+                          value: '+${_state.coins}',
+                        ),
+                        if (_result != null) ...[
+                          const Divider(height: 24),
+                          ScoreLine(
+                            label: 'Ancien score',
+                            value: '${_result!.previousScore}',
+                          ),
+                          ScoreLine(
+                            label: 'Score conservé',
+                            value: '${_result!.savedScore}',
+                          ),
+                          if (_result!.isNewRecord)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: Text(
+                                'Nouveau record !',
+                                style: TextStyle(
+                                  color: Colors.amber,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                        ],
+                        if (_saving)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            child: CircularProgressIndicator(),
+                          ),
+                        if (_saveError != null) ...[
+                          const SizedBox(height: 12),
+                          Text(
+                            _saveError!,
+                            style: const TextStyle(color: Colors.redAccent),
+                          ),
+                          TextButton(
+                            onPressed: _save,
+                            child: const Text('Réessayer'),
+                          ),
+                        ],
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: _quit,
+                          onPressed: _saving ? null : _quit,
                           child: const Text('Continuer'),
                         ),
                       ],
                     ),
                     'lost': (_, _) => GamePanel(
-                      title: 'Perdu',
+                      title: _game.loseReason,
                       children: [
                         const Text('Le score n\'est pas enregistré.'),
                         const SizedBox(height: 16),

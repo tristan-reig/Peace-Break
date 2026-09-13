@@ -3,9 +3,9 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import 'components/ball.dart';
+import 'components/brick.dart';
 import 'components/paddle.dart';
 import 'components/play_area.dart';
-import 'components/brick.dart';
 import 'game_config.dart';
 import 'game_state.dart';
 import 'levels.dart';
@@ -24,8 +24,12 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
 
   late final Paddle paddle;
   late final Ball ball;
+
   int _remainingBricks = 0;
   bool _over = false;
+
+  String loseReason = '';
+  VoidCallback? onWin;
 
   @override
   Color backgroundColor() => const Color(0xFF101018);
@@ -38,24 +42,28 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
     ball = Ball(position: Vector2(kGameWidth / 2, kPaddleY - 40));
 
     world.addAll([PlayArea(), paddle, ball]);
+
+    final hits = _buildWall();
+    state.startTimer(kTimeBase + hits * kTimePerHit);
     ball.launch();
-    _buildWall();
   }
 
-  void movePaddle(double x) {
-    paddle.moveTo(x);
-    if (ball.velocity.isZero()) ball.position.x = paddle.position.x;
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (_over) return;
+    if (state.tick(dt)) _lose('Temps écoulé');
   }
 
-  void _buildWall() {
+  int _buildWall() {
     final rows = levelRows(stage);
     var count = 0;
+    var hits = 0;
 
     for (var row = 0; row < rows.length; row++) {
       final line = rows[row];
       for (var col = 0; col < kGridColumns && col < line.length; col++) {
-        final char = line[col];
-        final hp = int.tryParse(char);
+        final hp = int.tryParse(line[col]);
         if (hp == null || hp <= 0) continue;
 
         world.add(
@@ -68,9 +76,17 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
           ),
         );
         count++;
+        hits += hp;
       }
     }
+
     _remainingBricks = count;
+    return hits;
+  }
+
+  void movePaddle(double x) {
+    paddle.moveTo(x);
+    if (ball.velocity.isZero()) ball.position.x = paddle.position.x;
   }
 
   void onBrickDestroyed(Brick brick) {
@@ -83,7 +99,7 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
     if (_over) return;
 
     if (state.loseLife()) {
-      _lose();
+      _lose('Plus de vies');
       return;
     }
     _resetBall();
@@ -99,12 +115,17 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
   void _win() {
     if (_over) return;
     _over = true;
+    state.applyVictoryBonuses();
+    ball.velocity = Vector2.zero();
     pauseEngine();
+    onWin?.call();
     overlays.add('won');
   }
 
-  void _lose() {
+  void _lose(String reason) {
+    if (_over) return;
     _over = true;
+    loseReason = reason;
     ball.velocity = Vector2.zero();
     pauseEngine();
     overlays.add('lost');

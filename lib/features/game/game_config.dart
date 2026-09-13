@@ -17,3 +17,9 @@ const double kGridTop = 100;
 
 const double kBrickWidth =
     (kGameWidth - 2 * kGridMargin - (8 - 1) * kBrickGap) / 8;
+
+const double kTimeBase = 60;
+const double kTimePerHit = 2.0;
+
+const int kPointsPerSecondLeft = 20;
+const int kPointsPerLifeLeft = 500;

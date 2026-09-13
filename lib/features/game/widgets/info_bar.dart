@@ -30,6 +30,7 @@ class InfoBar extends StatelessWidget {
               'Stage ${state.stage}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
+            _Timer(seconds: state.secondsLeft),
             const Spacer(),
             _stat(Icons.star, '${state.score}'),
             const SizedBox(width: 12),
@@ -61,4 +62,36 @@ class InfoBar extends StatelessWidget {
       Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
     ],
   );
+}
+
+class _Timer extends StatelessWidget {
+  const _Timer({required this.seconds});
+  final int seconds;
+
+  @override
+  Widget build(BuildContext context) {
+    final urgent = seconds <= 10;
+    final m = (seconds ~/ 60).toString();
+    final s = (seconds % 60).toString().padLeft(2, '0');
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.timer,
+          size: 16,
+          color: urgent ? Colors.redAccent : Colors.white70,
+        ),
+        const SizedBox(width: 3),
+        Text(
+          '$m:$s',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontFeatures: const [FontFeature.tabularFigures()],
+            color: urgent ? Colors.redAccent : null,
+          ),
+        ),
+      ],
+    );
+  }
 }
