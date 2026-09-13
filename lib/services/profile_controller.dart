@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../models/profile.dart';
 import 'profile_service.dart';
 

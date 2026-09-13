@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'core/routes.dart';
 import 'core/theme.dart';
 import 'core/widgets/placeholder_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/menu/menu_screen.dart';
+import 'features/game/game_screen.dart';
 
 class PeaceBreakApp extends StatelessWidget {
   const PeaceBreakApp({super.key});
@@ -22,7 +24,7 @@ class PeaceBreakApp extends StatelessWidget {
         Routes.register: (_) => const RegisterScreen(),
         Routes.menu: (_) => const MenuScreen(),
         Routes.stages: (_) => const PlaceholderScreen('Stages complétés'),
-        Routes.game: (_) => const PlaceholderScreen('Jeu'),
+        Routes.game: (_) => const GameScreen(),
         Routes.shop: (_) => const PlaceholderScreen('Shop'),
         Routes.inventory: (_) => const PlaceholderScreen('Inventaire'),
         Routes.leaderboard: (_) => const PlaceholderScreen('Top 10'),
@@ -38,8 +40,6 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasSession = Supabase.instance.client.auth.currentSession != null;
-    return hasSession
-        ? const MenuScreen()
-        : const LoginScreen();
+    return hasSession ? const MenuScreen() : const LoginScreen();
   }
 }

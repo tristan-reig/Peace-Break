@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/validators.dart';
 import '../../services/auth_service.dart';
 
@@ -88,12 +89,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _confirm,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirmation',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Confirmation'),
                   obscureText: true,
-                  validator: (v) =>
-                      Validators.confirmation(v, _password.text),
+                  validator: (v) => Validators.confirmation(v, _password.text),
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: 16),

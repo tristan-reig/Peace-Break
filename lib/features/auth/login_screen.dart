@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/routes.dart';
 import '../../core/validators.dart';
 import '../../services/auth_service.dart';
@@ -104,8 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextButton(
                     onPressed: _loading
                         ? null
-                        : () =>
-                              Navigator.pushNamed(context, Routes.register),
+                        : () => Navigator.pushNamed(context, Routes.register),
                     child: const Text('Pas de compte ? Inscris-toi'),
                   ),
                 ],

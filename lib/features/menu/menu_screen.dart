@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/routes.dart';
 import '../../core/theme.dart';
 import '../../services/profile_controller.dart';
@@ -42,7 +43,9 @@ class _MenuScreenState extends State<MenuScreen> {
               const SizedBox(height: 20),
 
               if (controller.loading && profile == null)
-                const Expanded(child: Center(child: CircularProgressIndicator()))
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
               else if (controller.error != null && profile == null)
                 Expanded(
                   child: Center(
@@ -176,9 +179,7 @@ class _PlayButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         minimumSize: const Size.fromHeight(72),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       onPressed: () => Navigator.pushNamed(context, Routes.game),
       child: Column(
