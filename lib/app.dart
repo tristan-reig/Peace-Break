@@ -5,6 +5,7 @@ import 'core/theme.dart';
 import 'core/widgets/placeholder_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
+import 'features/menu/menu_screen.dart';
 
 class PeaceBreakApp extends StatelessWidget {
   const PeaceBreakApp({super.key});
@@ -19,7 +20,7 @@ class PeaceBreakApp extends StatelessWidget {
       routes: {
         Routes.login: (_) => const LoginScreen(),
         Routes.register: (_) => const RegisterScreen(),
-        Routes.menu: (_) => const PlaceholderScreen('Menu principal'),
+        Routes.menu: (_) => const MenuScreen(),
         Routes.stages: (_) => const PlaceholderScreen('Stages complétés'),
         Routes.game: (_) => const PlaceholderScreen('Jeu'),
         Routes.shop: (_) => const PlaceholderScreen('Shop'),
@@ -38,7 +39,7 @@ class AuthGate extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasSession = Supabase.instance.client.auth.currentSession != null;
     return hasSession
-        ? const PlaceholderScreen('Menu principal')
+        ? const MenuScreen()
         : const LoginScreen();
   }
 }

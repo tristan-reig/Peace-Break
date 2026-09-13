@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
+import '../../services/profile_controller.dart';
 import '../routes.dart';
 
 class PlaceholderScreen extends StatelessWidget {
@@ -7,7 +9,9 @@ class PlaceholderScreen extends StatelessWidget {
   final String title;
 
   Future<void> _logout(BuildContext context) async {
+    final profiles = context.read<ProfileController>();
     await AuthService().logout();
+    profiles.clear();
     if (!context.mounted) return;
     Navigator.pushNamedAndRemoveUntil(context, Routes.login, (_) => false);
   }
