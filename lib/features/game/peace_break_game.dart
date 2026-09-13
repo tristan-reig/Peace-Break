@@ -43,8 +43,8 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
 
     world.addAll([PlayArea(), paddle, ball]);
 
-    final hits = _buildWall();
-    state.startTimer(kTimeBase + hits * kTimePerHit);
+    _buildWall();
+    state.startTimer(level(stage).seconds.toDouble());
     ball.launch();
   }
 
@@ -55,13 +55,12 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
     if (state.tick(dt)) _lose('Temps écoulé');
   }
 
-  int _buildWall() {
-    final rows = levelRows(stage);
+  void _buildWall() {
+    final def = level(stage);
     var count = 0;
-    var hits = 0;
 
-    for (var row = 0; row < rows.length; row++) {
-      final line = rows[row];
+    for (var row = 0; row < def.rows.length; row++) {
+      final line = def.rows[row];
       for (var col = 0; col < kGridColumns && col < line.length; col++) {
         final hp = int.tryParse(line[col]);
         if (hp == null || hp <= 0) continue;
@@ -76,12 +75,9 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
           ),
         );
         count++;
-        hits += hp;
       }
     }
-
     _remainingBricks = count;
-    return hits;
   }
 
   void movePaddle(double x) {
