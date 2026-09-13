@@ -24,9 +24,15 @@ class PeaceBreakApp extends StatelessWidget {
         Routes.register: (_) => const RegisterScreen(),
         Routes.menu: (_) => const MenuScreen(),
         Routes.stages: (_) => const PlaceholderScreen('Stages complétés'),
-        Routes.game: (ctx) => GameScreen(
-          stage: ModalRoute.of(ctx)?.settings.arguments as int? ?? 1,
-        ),
+        Routes.game: (ctx) {
+          final args =
+              ModalRoute.of(ctx)?.settings.arguments as Map<String, dynamic>? ??
+              {};
+          return GameScreen(
+            stage: args['stage'] as int? ?? 1,
+            maxLives: args['maxLives'] as int? ?? 3,
+          );
+        },
         Routes.shop: (_) => const PlaceholderScreen('Shop'),
         Routes.inventory: (_) => const PlaceholderScreen('Inventaire'),
         Routes.leaderboard: (_) => const PlaceholderScreen('Top 10'),

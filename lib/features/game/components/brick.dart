@@ -8,12 +8,14 @@ import '../peace_break_game.dart';
 class Brick extends RectangleComponent
     with CollisionCallbacks, HasGameReference<PeaceBreakGame> {
   Brick({required Vector2 position, required this.hitPoints})
-    : super(
+    : initialHitPoints = hitPoints,
+      super(
         size: Vector2(kBrickWidth, kBrickHeight),
         position: position,
         anchor: Anchor.topLeft,
       );
 
+  final int initialHitPoints;
   int hitPoints;
 
   static const _colors = <int, Color>{

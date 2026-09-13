@@ -1,63 +1,108 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import 'game_state.dart';
 import 'peace_break_game.dart';
+import 'widgets/game_overlays.dart';
+import 'widgets/info_bar.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key, this.stage = 1});
+  const GameScreen({super.key, required this.stage, required this.maxLives});
+
   final int stage;
+  final int maxLives;
+
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  late final PeaceBreakGame _game = PeaceBreakGame(stage: widget.stage);
+  late final GameState _state = GameState(
+    stage: widget.stage,
+    maxLives: widget.maxLives,
+  );
+  late final PeaceBreakGame _game = PeaceBreakGame(state: _state);
+
+  @override
+  void dispose() {
+    _state.dispose();
+    super.dispose();
+  }
+
+  void _quit() => Navigator.pop(context);
+
+  void _retry() {
+    Navigator.pushReplacementNamed(
+      context,
+      ModalRoute.of(context)!.settings.name!,
+      arguments: {'stage': widget.stage, 'maxLives': widget.maxLives},
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            GameWidget(
-              game: _game,
-              overlayBuilderMap: {
-                'cleared': (context, PeaceBreakGame game) => Center(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Stage terminé !',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Retour au menu'),
-                          ),
-                        ],
-                      ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _game.togglePause();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: Column(
+            children: [
+              InfoBar(state: _state, onPause: _game.togglePause),
+              Expanded(
+                child: GameWidget(
+                  game: _game,
+                  overlayBuilderMap: {
+                    'paused': (_, _) => GamePanel(
+                      title: 'Pause',
+                      children: [
+                        ElevatedButton(
+                          onPressed: _game.togglePause,
+                          child: const Text('Reprendre'),
+                        ),
+                        const SizedBox(height: 8),
+                        OutlinedButton(
+                          onPressed: _quit,
+                          child: const Text('Quitter'),
+                        ),
+                      ],
                     ),
-                  ),
+                    'won': (_, _) => GamePanel(
+                      title: 'Stage réussi !',
+                      children: [
+                        ScoreLine(label: 'Score', value: '${_state.score}'),
+                        ScoreLine(label: 'Pièces', value: '${_state.coins}'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _quit,
+                          child: const Text('Continuer'),
+                        ),
+                      ],
+                    ),
+                    'lost': (_, _) => GamePanel(
+                      title: 'Perdu',
+                      children: [
+                        const Text('Le score n\'est pas enregistré.'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _retry,
+                          child: const Text('Réessayer'),
+                        ),
+                        const SizedBox(height: 8),
+                        OutlinedButton(
+                          onPressed: _quit,
+                          child: const Text('Menu principal'),
+                        ),
+                      ],
+                    ),
+                  },
                 ),
-              },
-            ),
-            Positioned(
-              top: 8,
-              left: 8,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white70),
-                onPressed: () => Navigator.pop(context),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

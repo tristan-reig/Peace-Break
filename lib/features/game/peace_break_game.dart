@@ -7,10 +7,11 @@ import 'components/paddle.dart';
 import 'components/play_area.dart';
 import 'components/brick.dart';
 import 'game_config.dart';
+import 'game_state.dart';
 import 'levels.dart';
 
 class PeaceBreakGame extends FlameGame with HasCollisionDetection {
-  PeaceBreakGame({this.stage = 1})
+  PeaceBreakGame({required this.state})
     : super(
         camera: CameraComponent.withFixedResolution(
           width: kGameWidth,
@@ -18,11 +19,13 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
         ),
       );
 
-  final int stage;
-  int _remainingBricks = 0;
+  final GameState state;
+  int get stage => state.stage;
 
   late final Paddle paddle;
   late final Ball ball;
+  int _remainingBricks = 0;
+  bool _over = false;
 
   @override
   Color backgroundColor() => const Color(0xFF101018);
@@ -42,13 +45,6 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
   void movePaddle(double x) {
     paddle.moveTo(x);
     if (ball.velocity.isZero()) ball.position.x = paddle.position.x;
-  }
-
-  void onBallLost() {
-    ball
-      ..position = Vector2(paddle.position.x, kPaddleY - 40)
-      ..velocity = Vector2.zero();
-    ball.launch();
   }
 
   void _buildWall() {
@@ -78,12 +74,50 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
   }
 
   void onBrickDestroyed(Brick brick) {
+    state.rewardBrick(brick.initialHitPoints);
     _remainingBricks--;
-    if (_remainingBricks <= 0) onStageCleared();
+    if (_remainingBricks <= 0) _win();
   }
 
-  void onStageCleared() {
+  void onBallLost() {
+    if (_over) return;
+
+    if (state.loseLife()) {
+      _lose();
+      return;
+    }
+    _resetBall();
+  }
+
+  void _resetBall() {
+    ball
+      ..position = Vector2(paddle.position.x, kPaddleY - 40)
+      ..velocity = Vector2.zero();
+    ball.launch();
+  }
+
+  void _win() {
+    if (_over) return;
+    _over = true;
     pauseEngine();
-    overlays.add('cleared');
+    overlays.add('won');
+  }
+
+  void _lose() {
+    _over = true;
+    ball.velocity = Vector2.zero();
+    pauseEngine();
+    overlays.add('lost');
+  }
+
+  void togglePause() {
+    if (_over) return;
+    if (paused) {
+      overlays.remove('paused');
+      resumeEngine();
+    } else {
+      pauseEngine();
+      overlays.add('paused');
+    }
   }
 }

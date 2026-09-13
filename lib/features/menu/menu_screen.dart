@@ -69,7 +69,10 @@ class _MenuScreenState extends State<MenuScreen> {
                   coins: profile.coins,
                 ),
                 const Spacer(),
-                _PlayButton(stage: profile.nextStage),
+                _PlayButton(
+                  stage: profile.nextStage,
+                  maxLives: profile.maxLives,
+                ),
                 const SizedBox(height: 32),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -169,8 +172,9 @@ class _StatsBar extends StatelessWidget {
 }
 
 class _PlayButton extends StatelessWidget {
-  const _PlayButton({required this.stage});
+  const _PlayButton({required this.stage, required this.maxLives});
   final int stage;
+  final int maxLives;
 
   @override
   Widget build(BuildContext context) {
@@ -179,8 +183,11 @@ class _PlayButton extends StatelessWidget {
         minimumSize: const Size.fromHeight(72),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-      onPressed: () =>
-          Navigator.pushNamed(context, Routes.game, arguments: stage),
+      onPressed: () => Navigator.pushNamed(
+        context,
+        Routes.game,
+        arguments: {'stage': stage, 'maxLives': maxLives},
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
