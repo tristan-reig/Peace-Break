@@ -121,7 +121,6 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 }
 
-/// Bandeau compact : pseudo à gauche, score et pièces à droite.
 class _StatsBar extends StatelessWidget {
   const _StatsBar({
     required this.username,
@@ -169,7 +168,6 @@ class _StatsBar extends StatelessWidget {
   );
 }
 
-/// Bouton principal, volontairement plus imposant que les autres.
 class _PlayButton extends StatelessWidget {
   const _PlayButton({required this.stage});
   final int stage;
@@ -181,7 +179,8 @@ class _PlayButton extends StatelessWidget {
         minimumSize: const Size.fromHeight(72),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-      onPressed: () => Navigator.pushNamed(context, Routes.game),
+      onPressed: () =>
+          Navigator.pushNamed(context, Routes.game, arguments: stage),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -196,7 +195,6 @@ class _PlayButton extends StatelessWidget {
   }
 }
 
-/// Grande icône carrée avec libellé, pour la navigation secondaire.
 class _IconTile extends StatelessWidget {
   const _IconTile({
     required this.icon,
