@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'app.dart';
 
-void main() => runApp(const PeaceBreakApp());
-
-class PeaceBreakApp extends StatelessWidget {
-  const PeaceBreakApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Peace Break',
-      home: Scaffold(body: Center(child: Text('Peace Break'))),
-    );
-  }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(const PeaceBreakApp());
 }
