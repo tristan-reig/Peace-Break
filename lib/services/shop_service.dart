@@ -21,7 +21,10 @@ class ShopService {
         .eq('user_id', userId);
     final ownedIds = owned.map((row) => row['item_id'] as String).toSet();
 
-    final rows = await _client.from('items').select().order('price');
+    final rows = await _client
+        .from('items')
+        .select()
+        .order('price', ascending: true);
 
     return rows
         .map(ShopItem.fromMap)

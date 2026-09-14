@@ -45,7 +45,7 @@ class StageService {
         .from('stage_progress')
         .select('stage_number, best_score')
         .eq('user_id', userId)
-        .order('stage_number');
+        .order('stage_number', ascending: true);
 
     return rows
         .map((row) => StageProgress.fromMap(row))

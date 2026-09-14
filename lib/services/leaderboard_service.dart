@@ -19,7 +19,7 @@ class LeaderboardService {
     final topRows = await _client
         .from('leaderboard')
         .select()
-        .order('rank')
+        .order('rank', ascending: true)
         .limit(10);
 
     final top = topRows.map(LeaderboardEntry.fromMap).toList(growable: false);

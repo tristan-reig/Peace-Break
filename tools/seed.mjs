@@ -45,7 +45,7 @@ async function seedUser(name, index) {
 
   const userId = data.user.id;
 
-  const cleared = Math.min(MAX_STAGE, Math.floor((index / NAMES.length) * 12));
+  const cleared = 1 + (index % MAX_STAGE);
 
   const rows = [];
   for (let stage = 1; stage <= cleared; stage++) {

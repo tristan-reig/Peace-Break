@@ -123,7 +123,7 @@ class _Row extends StatelessWidget {
   Color get _rankColor => switch (entry.rank) {
     1 => const Color(0xFFFFD54F),
     2 => const Color(0xFFCFD8DC),
-    3 => const Color(0xFFBCAAA4),
+    3 => const Color(0xFFB87333),
     _ => AppTheme.accent,
   };
 
