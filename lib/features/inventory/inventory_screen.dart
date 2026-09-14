@@ -125,7 +125,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     if (preview == null)
                       const Text(
                         'Choisis un objet pour le prévisualiser',
-                        style: TextStyle(fontSize: 13, color: Colors.white54),
+                        style: TextStyle(fontSize: 13, color: AppTheme.textDim),
                       )
                     else ...[
                       Text(
@@ -141,8 +141,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           color: preview.equipped
-                              ? Colors.lightGreenAccent
-                              : Colors.white54,
+                              ? AppTheme.green
+                              : AppTheme.textDim,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -175,20 +175,17 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     final isSelected = _selected?.item.id == entry.item.id;
 
                     return Material(
-                      color: Colors.white10,
-                      borderRadius: BorderRadius.circular(12),
+                      color: AppTheme.panel,
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
                         onTap: () => setState(() => _selected = entry),
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: entry.equipped
-                                  ? Colors.lightGreenAccent
+                                  ? AppTheme.green
                                   : (isSelected
                                         ? AppTheme.accent
-                                        : Colors.white24),
+                                        : AppTheme.greenDim),
                               width: entry.equipped || isSelected ? 2.5 : 1,
                             ),
                           ),
@@ -210,7 +207,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                   child: Icon(
                                     Icons.check_circle,
                                     size: 15,
-                                    color: Colors.lightGreenAccent,
+                                    color: AppTheme.green,
                                   ),
                                 ),
                             ],

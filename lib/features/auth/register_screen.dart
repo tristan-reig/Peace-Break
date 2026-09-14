@@ -98,7 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 16),
                   Text(
                     _error!,
-                    style: const TextStyle(color: Colors.redAccent),
+                    style: const TextStyle(color: AppTheme.magenta),
                     textAlign: TextAlign.center,
                   ),
                 ],

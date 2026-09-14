@@ -2,6 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/theme.dart';
 import '../game_config.dart';
 import '../peace_break_game.dart';
 
@@ -19,9 +20,9 @@ class Brick extends RectangleComponent
   int hitPoints;
 
   static const _colors = <int, Color>{
-    1: Color(0xFF3DFF7A),
-    2: Color(0xFFFFB000),
-    3: Color(0xFFFF3D7F),
+    1: AppTheme.green,
+    2: AppTheme.amber,
+    3: AppTheme.magenta,
   };
 
   @override

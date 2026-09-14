@@ -98,7 +98,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     children: [
                       const Text(
                         'Ton classement',
-                        style: TextStyle(fontSize: 13, color: Colors.white54),
+                        style: TextStyle(fontSize: 13, color: AppTheme.textDim),
                       ),
                       const SizedBox(height: 8),
                       _Row(entry: data.me!, highlight: true),
@@ -121,10 +121,10 @@ class _Row extends StatelessWidget {
   final bool highlight;
 
   Color get _rankColor => switch (entry.rank) {
-    1 => const Color(0xFFFFD54F),
-    2 => const Color(0xFFCFD8DC),
+    1 => AppTheme.amber,
+    2 => const Color(0xFFB8C4B8),
     3 => const Color(0xFFB87333),
-    _ => AppTheme.accent,
+    _ => AppTheme.green,
   };
 
   @override
@@ -134,8 +134,7 @@ class _Row extends StatelessWidget {
       decoration: BoxDecoration(
         color: highlight
             ? AppTheme.accent.withValues(alpha: 0.15)
-            : Colors.white10,
-        borderRadius: BorderRadius.circular(12),
+            : AppTheme.panel,
         border: Border.all(
           color: highlight ? AppTheme.accent : Colors.transparent,
           width: highlight ? 2 : 0,

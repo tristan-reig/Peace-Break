@@ -120,21 +120,20 @@ class _StageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderColor = locked
-        ? Colors.white24
+        ? AppTheme.greenDim
         : isNext
-        ? Colors.lightGreenAccent
+        ? AppTheme.green
         : AppTheme.accent;
 
     final tile = Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: borderColor, width: 2),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (locked)
-            const Icon(Icons.lock, size: 30, color: Colors.white38)
+            const Icon(Icons.lock, size: 30, color: AppTheme.textDim)
           else
             Text(
               '$stage',
@@ -148,7 +147,7 @@ class _StageTile extends StatelessWidget {
           if (locked)
             Text(
               'Stage $stage',
-              style: const TextStyle(fontSize: 11, color: Colors.white38),
+              style: const TextStyle(fontSize: 11, color: AppTheme.textDim),
             )
           else if (bestScore != null) ...[
             const Text('Score', style: TextStyle(fontSize: 11)),
@@ -162,7 +161,7 @@ class _StageTile extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: Colors.lightGreenAccent,
+                color: AppTheme.green,
               ),
             ),
         ],
@@ -172,15 +171,8 @@ class _StageTile extends StatelessWidget {
     return Opacity(
       opacity: locked ? 0.45 : 1,
       child: Material(
-        color: locked ? Colors.white.withValues(alpha: 0.03) : Colors.white10,
-        borderRadius: BorderRadius.circular(14),
-        child: locked
-            ? tile
-            : InkWell(
-                borderRadius: BorderRadius.circular(14),
-                onTap: onTap,
-                child: tile,
-              ),
+        color: locked ? AppTheme.bg : AppTheme.panel,
+        child: locked ? tile : InkWell(onTap: onTap, child: tile),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/theme.dart';
 import '../../services/inventory_service.dart';
 import '../../services/profile_controller.dart';
 import '../../services/stage_service.dart';
@@ -167,7 +168,7 @@ class _GameScreenState extends State<GameScreen> {
                               child: Text(
                                 'Nouveau record !',
                                 style: TextStyle(
-                                  color: Colors.amber,
+                                  color: AppTheme.amber,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -182,7 +183,7 @@ class _GameScreenState extends State<GameScreen> {
                           const SizedBox(height: 12),
                           Text(
                             _saveError!,
-                            style: const TextStyle(color: Colors.redAccent),
+                            style: const TextStyle(color: AppTheme.magenta),
                           ),
                           TextButton(
                             onPressed: _save,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'dart:math';
 
+import '../../core/theme.dart';
 import '../../services/inventory_service.dart';
 import 'components/ball.dart';
 import 'components/brick.dart';
@@ -45,7 +46,7 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
   Map<PowerType, double> get activePowers => Map.unmodifiable(_activePowers);
 
   @override
-  Color backgroundColor() => const Color(0xFF060A06);
+  Color backgroundColor() => AppTheme.gameBg;
 
   @override
   Future<void> onLoad() async {

@@ -10,6 +10,7 @@ class AppTheme {
   static const cyan = Color(0xFF3DE8FF);
   static const text = Color(0xFFCFF5DA);
   static const textDim = Color(0xFF6E9C7C);
+  static const gameBg = Color(0xFF060A06);
 
   static const accent = green;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme.dart';
 import '../skins.dart';
 
 class SkinScene extends StatelessWidget {
@@ -20,12 +21,16 @@ class SkinScene extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+    return ClipRect(
       child: Container(
         height: height,
         width: double.infinity,
-        color: const Color(0xFF101018),
+        decoration: const BoxDecoration(
+          color: AppTheme.gameBg,
+          border: Border.fromBorderSide(
+            BorderSide(color: AppTheme.greenDim, width: 2),
+          ),
+        ),
         child: CustomPaint(
           painter: _ScenePainter(paddle, ball, showPaddle, showBall),
         ),

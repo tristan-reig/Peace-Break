@@ -151,7 +151,7 @@ class _ShopScreenState extends State<ShopScreen> {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: const Color(0xFF101018),
+                          color: AppTheme.gameBg,
                         ),
                         child: const Center(
                           child: Column(
@@ -160,7 +160,7 @@ class _ShopScreenState extends State<ShopScreen> {
                               Icon(
                                 Icons.favorite,
                                 size: 52,
-                                color: Colors.redAccent,
+                                color: AppTheme.magenta,
                               ),
                               SizedBox(height: 8),
                               Text('+1 vie permanente'),
@@ -253,16 +253,13 @@ class _ItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white10,
-      borderRadius: BorderRadius.circular(12),
+      color: AppTheme.panel,
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected ? AppTheme.accent : Colors.white24,
+              color: selected ? AppTheme.accent : AppTheme.greenDim,
               width: selected ? 2.5 : 1,
             ),
           ),
@@ -272,7 +269,7 @@ class _ItemTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (item.kind == ItemKind.lifePlus)
-                  const Icon(Icons.favorite, size: 30, color: Colors.redAccent)
+                  const Icon(Icons.favorite, size: 30, color: AppTheme.magenta)
                 else
                   SkinThumb(
                     style: item.kind == ItemKind.ballSkin

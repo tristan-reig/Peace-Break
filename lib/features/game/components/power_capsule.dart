@@ -4,6 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/theme.dart';
 import '../game_config.dart';
 import '../peace_break_game.dart';
 import '../power_up.dart';
@@ -48,7 +49,7 @@ class PowerCapsule extends PositionComponent
 
     canvas.drawPath(
       path,
-      Paint()..color = const Color(0xFF060A06).withValues(alpha: 0.85),
+      Paint()..color = AppTheme.gameBg.withValues(alpha: 0.85),
     );
 
     canvas.drawPath(

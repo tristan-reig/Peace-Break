@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/routes.dart';
+import '../../core/theme.dart';
 import '../../core/validators.dart';
 import '../../services/auth_service.dart';
 import '../../services/profile_controller.dart';
@@ -38,7 +39,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           FilledButton(
             style: danger
-                ? FilledButton.styleFrom(backgroundColor: Colors.red.shade700)
+                ? FilledButton.styleFrom(
+                    backgroundColor: AppTheme.magenta,
+                    foregroundColor: AppTheme.bg,
+                  )
                 : null,
             onPressed: () => Navigator.pop(context, true),
             child: Text(confirmLabel),
@@ -280,7 +284,7 @@ class _SectionTitle extends StatelessWidget {
     padding: const EdgeInsets.only(bottom: 8, left: 4),
     child: Text(
       text,
-      style: const TextStyle(fontSize: 13, color: Colors.white54),
+      style: const TextStyle(fontSize: 13, color: AppTheme.textDim),
     ),
   );
 }
@@ -300,7 +304,7 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = danger ? Colors.red.shade300 : null;
+    final color = danger ? AppTheme.magenta : AppTheme.text;
     return Card(
       child: ListTile(
         leading: Icon(icon, color: color),
