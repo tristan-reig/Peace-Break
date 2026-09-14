@@ -8,6 +8,7 @@ import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/game/game_screen.dart';
 import 'features/menu/menu_screen.dart';
+import 'features/shop/shop_screen.dart';
 import 'features/stages/stages_screen.dart';
 
 class PeaceBreakApp extends StatelessWidget {
@@ -34,7 +35,7 @@ class PeaceBreakApp extends StatelessWidget {
             maxLives: args['maxLives'] as int? ?? 3,
           );
         },
-        Routes.shop: (_) => const PlaceholderScreen('Shop'),
+        Routes.shop: (_) => const ShopScreen(),
         Routes.inventory: (_) => const PlaceholderScreen('Inventaire'),
         Routes.leaderboard: (_) => const PlaceholderScreen('Top 10'),
         Routes.settings: (_) => const PlaceholderScreen('Réglages'),
