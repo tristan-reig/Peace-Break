@@ -7,6 +7,7 @@ import 'core/widgets/placeholder_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/game/game_screen.dart';
+import 'features/inventory/inventory_screen.dart';
 import 'features/menu/menu_screen.dart';
 import 'features/shop/shop_screen.dart';
 import 'features/stages/stages_screen.dart';
@@ -29,14 +30,14 @@ class PeaceBreakApp extends StatelessWidget {
         Routes.game: (ctx) {
           final args =
               ModalRoute.of(ctx)?.settings.arguments as Map<String, dynamic>? ??
-              {};
+              const {};
           return GameScreen(
             stage: args['stage'] as int? ?? 1,
             maxLives: args['maxLives'] as int? ?? 3,
           );
         },
         Routes.shop: (_) => const ShopScreen(),
-        Routes.inventory: (_) => const PlaceholderScreen('Inventaire'),
+        Routes.inventory: (_) => const InventoryScreen(),
         Routes.leaderboard: (_) => const PlaceholderScreen('Top 10'),
         Routes.settings: (_) => const PlaceholderScreen('Réglages'),
       },

@@ -2,12 +2,13 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../services/inventory_service.dart';
+import '../../services/profile_controller.dart';
+import '../../services/stage_service.dart';
 import 'game_state.dart';
 import 'peace_break_game.dart';
 import 'widgets/game_overlays.dart';
 import 'widgets/info_bar.dart';
-import '../../services/profile_controller.dart';
-import '../../services/stage_service.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key, required this.stage, required this.maxLives});
@@ -24,7 +25,8 @@ class _GameScreenState extends State<GameScreen> {
     stage: widget.stage,
     maxLives: widget.maxLives,
   );
-  late final PeaceBreakGame _game = PeaceBreakGame(state: _state);
+
+  PeaceBreakGame? _game;
 
   StageResult? _result;
   bool _saving = false;
@@ -33,7 +35,24 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    _game.onWin = _save;
+    _prepare();
+  }
+
+  @override
+  void dispose() {
+    _state.dispose();
+    super.dispose();
+  }
+
+  Future<void> _prepare() async {
+    var skins = const EquippedSkins();
+    try {
+      skins = await InventoryService().equipped();
+    } catch (_) {}
+    if (!mounted) return;
+    setState(() {
+      _game = PeaceBreakGame(state: _state, skins: skins)..onWin = _save;
+    });
   }
 
   Future<void> _save() async {
@@ -59,12 +78,6 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _state.dispose();
-    super.dispose();
-  }
-
   void _quit() => Navigator.pop(context);
 
   void _retry() {
@@ -77,10 +90,19 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final game = _game;
+
+    if (game == null) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _game.togglePause();
+        if (!didPop) game.togglePause();
       },
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -89,18 +111,18 @@ class _GameScreenState extends State<GameScreen> {
             children: [
               InfoBar(
                 state: _state,
-                onPause: _game.togglePause,
-                activePowers: () => _game.activePowers,
+                onPause: game.togglePause,
+                activePowers: () => game.activePowers,
               ),
               Expanded(
                 child: GameWidget(
-                  game: _game,
+                  game: game,
                   overlayBuilderMap: {
                     'paused': (_, _) => GamePanel(
                       title: 'Pause',
                       children: [
                         ElevatedButton(
-                          onPressed: _game.togglePause,
+                          onPressed: game.togglePause,
                           child: const Text('Reprendre'),
                         ),
                         const SizedBox(height: 8),
@@ -114,16 +136,16 @@ class _GameScreenState extends State<GameScreen> {
                       title: 'Stage réussi !',
                       children: [
                         ScoreLine(
+                          label: 'Score de la partie',
+                          value: '${_state.score}',
+                        ),
+                        ScoreLine(
                           label: 'Bonus temps',
                           value: '+${_state.timeBonus}',
                         ),
                         ScoreLine(
                           label: 'Bonus vies',
                           value: '+${_state.livesBonus}',
-                        ),
-                        ScoreLine(
-                          label: 'Score de la partie',
-                          value: '${_state.score}',
                         ),
                         ScoreLine(
                           label: 'Pièces gagnées',
@@ -175,7 +197,7 @@ class _GameScreenState extends State<GameScreen> {
                       ],
                     ),
                     'lost': (_, _) => GamePanel(
-                      title: _game.loseReason,
+                      title: game.loseReason,
                       children: [
                         const Text('Le score n\'est pas enregistré.'),
                         const SizedBox(height: 16),

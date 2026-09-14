@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'dart:math';
 
+import '../../services/inventory_service.dart';
 import 'components/ball.dart';
 import 'components/brick.dart';
 import 'components/paddle.dart';
@@ -13,9 +14,10 @@ import 'game_config.dart';
 import 'game_state.dart';
 import 'levels.dart';
 import 'power_up.dart';
+import 'skins.dart';
 
 class PeaceBreakGame extends FlameGame with HasCollisionDetection {
-  PeaceBreakGame({required this.state})
+  PeaceBreakGame({required this.state, this.skins = const EquippedSkins()})
     : super(
         camera: CameraComponent.withFixedResolution(
           width: kGameWidth,
@@ -37,6 +39,8 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
 
   final _random = Random();
 
+  final EquippedSkins skins;
+
   final Map<PowerType, double> _activePowers = {};
   Map<PowerType, double> get activePowers => Map.unmodifiable(_activePowers);
 
@@ -47,8 +51,11 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
   Future<void> onLoad() async {
     camera.viewfinder.anchor = Anchor.topLeft;
 
-    paddle = Paddle();
-    ball = Ball(position: Vector2(kGameWidth / 2, kPaddleY - 40));
+    paddle = Paddle(color: paddleColor(skins.paddle));
+    ball = Ball(
+      position: Vector2(kGameWidth / 2, kPaddleY - 40),
+      color: ballColor(skins.ball),
+    );
 
     world.addAll([PlayArea(), paddle, ball]);
 

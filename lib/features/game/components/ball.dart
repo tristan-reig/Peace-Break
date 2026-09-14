@@ -6,17 +6,18 @@ import 'package:flutter/material.dart';
 
 import '../game_config.dart';
 import '../peace_break_game.dart';
+import '../skins.dart';
 import 'paddle.dart';
 import 'brick.dart';
 
 class Ball extends CircleComponent
     with CollisionCallbacks, HasGameReference<PeaceBreakGame> {
-  Ball({required Vector2 position})
+  Ball({required Vector2 position, Color color = kDefaultBallColor})
     : super(
         radius: kBallRadius,
         position: position,
         anchor: Anchor.center,
-        paint: Paint()..color = const Color(0xFF4FC3F7),
+        paint: Paint()..color = color,
       );
 
   Vector2 velocity = Vector2.zero();

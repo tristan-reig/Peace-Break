@@ -3,14 +3,15 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 import '../game_config.dart';
+import '../skins.dart';
 
 class Paddle extends RectangleComponent with CollisionCallbacks {
-  Paddle()
+  Paddle({Color color = kDefaultPaddleColor})
     : super(
         size: Vector2(kPaddleWidth, kPaddleHeight),
         position: Vector2(kGameWidth / 2, kPaddleY),
         anchor: Anchor.center,
-        paint: Paint()..color = const Color(0xFFB56BD8),
+        paint: Paint()..color = color,
       );
 
   @override
