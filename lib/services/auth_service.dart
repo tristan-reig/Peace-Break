@@ -68,4 +68,32 @@ class AuthService {
     if (msg.contains('weak password')) return 'Mot de passe trop faible';
     return 'Erreur : ${e.message}';
   }
+
+  Future<void> changePassword(String newPassword) async {
+    try {
+      await _client.auth.updateUser(UserAttributes(password: newPassword));
+    } on AuthException catch (e) {
+      throw AuthFailure(_translate(e));
+    }
+  }
+
+  Future<void> changeUsername(String username) async {
+    final available = await _client.rpc(
+      'username_available',
+      params: {'p_username': username},
+    ) as bool;
+    if (!available) throw AuthFailure('Ce pseudo est déjà utilisé');
+
+    await _client
+        .from('profiles')
+        .update({'username': username})
+        .eq('id', _client.auth.currentUser!.id);
+  }
+
+  Future<void> resetProgress() => _client.rpc('reset_progress');
+
+  Future<void> deleteAccount() async {
+    await _client.rpc('delete_account');
+    await _client.auth.signOut();
+  }
 }
