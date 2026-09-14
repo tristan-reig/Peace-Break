@@ -6,8 +6,9 @@ import 'core/theme.dart';
 import 'core/widgets/placeholder_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
-import 'features/menu/menu_screen.dart';
 import 'features/game/game_screen.dart';
+import 'features/menu/menu_screen.dart';
+import 'features/stages/stages_screen.dart';
 
 class PeaceBreakApp extends StatelessWidget {
   const PeaceBreakApp({super.key});
@@ -23,7 +24,7 @@ class PeaceBreakApp extends StatelessWidget {
         Routes.login: (_) => const LoginScreen(),
         Routes.register: (_) => const RegisterScreen(),
         Routes.menu: (_) => const MenuScreen(),
-        Routes.stages: (_) => const PlaceholderScreen('Stages complétés'),
+        Routes.stages: (_) => const StagesScreen(),
         Routes.game: (ctx) {
           final args =
               ModalRoute.of(ctx)?.settings.arguments as Map<String, dynamic>? ??

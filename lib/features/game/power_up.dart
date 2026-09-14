@@ -41,4 +41,4 @@ enum PowerType {
 
 const double kPowerDuration = 8;
 
-const double kDropChance = 1.0;
+const double kDropChance = 0.2;

@@ -49,3 +49,5 @@ const List<LevelDef> kLevels = [
 ];
 
 LevelDef level(int stage) => kLevels[(stage - 1).clamp(0, kLevels.length - 1)];
+
+int get kLevelCount => kLevels.length;

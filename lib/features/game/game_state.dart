@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
 
 import 'game_config.dart';
+import 'levels.dart';
 
 class GameState extends ChangeNotifier {
-  GameState({required this.stage, required this.maxLives}) : lives = maxLives;
+  GameState({required this.stage, required this.maxLives})
+    : lives = maxLives,
+      timeLeft = level(stage).seconds.toDouble();
 
   final int stage;
   final int maxLives;
@@ -12,7 +15,7 @@ class GameState extends ChangeNotifier {
   int score = 0;
   int coins = 0;
 
-  double timeLeft = 0;
+  double timeLeft;
   int timeBonus = 0;
   int livesBonus = 0;
 
@@ -20,10 +23,6 @@ class GameState extends ChangeNotifier {
 
   static const _scorePerHp = {1: 50, 2: 120, 3: 200};
   static const _coinsPerHp = {1: 5, 2: 12, 3: 20};
-
-  void startTimer(double seconds) {
-    timeLeft = seconds;
-  }
 
   bool tick(double dt) {
     if (timeLeft <= 0) return false;

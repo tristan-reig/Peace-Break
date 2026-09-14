@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/stage_progress.dart';
+
 class StageResult {
   const StageResult({
     required this.previousScore,
@@ -33,5 +35,20 @@ class StageService {
       savedScore: row['saved_score'] as int,
       coinsAdded: row['coins_added'] as int,
     );
+  }
+
+  Future<List<StageProgress>> completedStages() async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw StateError('Aucun utilisateur connecté');
+
+    final rows = await _client
+        .from('stage_progress')
+        .select('stage_number, best_score')
+        .eq('user_id', userId)
+        .order('stage_number');
+
+    return rows
+        .map((row) => StageProgress.fromMap(row))
+        .toList(growable: false);
   }
 }

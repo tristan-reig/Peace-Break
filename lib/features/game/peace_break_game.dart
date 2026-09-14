@@ -53,7 +53,6 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
     world.addAll([PlayArea(), paddle, ball]);
 
     _buildWall();
-    state.startTimer(level(stage).seconds.toDouble());
     ball.launch();
   }
 
