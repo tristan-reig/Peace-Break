@@ -8,6 +8,7 @@ import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/game/game_screen.dart';
 import 'features/inventory/inventory_screen.dart';
+import 'features/leaderboard/leaderboard_screen.dart';
 import 'features/menu/menu_screen.dart';
 import 'features/shop/shop_screen.dart';
 import 'features/stages/stages_screen.dart';
@@ -38,7 +39,7 @@ class PeaceBreakApp extends StatelessWidget {
         },
         Routes.shop: (_) => const ShopScreen(),
         Routes.inventory: (_) => const InventoryScreen(),
-        Routes.leaderboard: (_) => const PlaceholderScreen('Top 10'),
+        Routes.leaderboard: (_) => const LeaderboardScreen(),
         Routes.settings: (_) => const PlaceholderScreen('Réglages'),
       },
     );
