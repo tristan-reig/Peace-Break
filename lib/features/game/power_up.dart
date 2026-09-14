@@ -2,43 +2,44 @@ import 'package:flutter/material.dart';
 
 enum PowerType {
   extraLife(
-    label: '+1',
-    color: Color(0xFFE05263),
+    glyph: PowerGlyph.heart,
+    color: Color(0xFF3DFF7A),
     icon: Icons.favorite,
     good: true,
   ),
   widerPaddle(
-    label: '↔',
-    color: Color(0xFF8BC34A),
+    glyph: PowerGlyph.expand,
+    color: Color(0xFF3DE8FF),
     icon: Icons.open_in_full,
     good: true,
   ),
   narrowerPaddle(
-    label: '><',
-    color: Color(0xFFFF8A65),
+    glyph: PowerGlyph.shrink,
+    color: Color(0xFFFF3D7F),
     icon: Icons.close_fullscreen,
     good: false,
   ),
   fasterBall(
-    label: '»',
-    color: Color(0xFFBA68C8),
+    glyph: PowerGlyph.bolt,
+    color: Color(0xFFFFB000),
     icon: Icons.fast_forward,
     good: false,
   );
 
   const PowerType({
-    required this.label,
+    required this.glyph,
     required this.color,
     required this.icon,
     required this.good,
   });
 
-  final String label;
+  final PowerGlyph glyph;
   final Color color;
   final IconData icon;
   final bool good;
 }
 
-const double kPowerDuration = 8;
+enum PowerGlyph { heart, expand, shrink, bolt }
 
-const double kDropChance = 0.2;
+const double kPowerDuration = 8;
+const double kDropChance = 1;
