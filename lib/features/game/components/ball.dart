@@ -12,16 +12,19 @@ import 'brick.dart';
 
 class Ball extends CircleComponent
     with CollisionCallbacks, HasGameReference<PeaceBreakGame> {
-  Ball({required Vector2 position, Color color = kDefaultBallColor})
-    : super(
-        radius: kBallRadius,
-        position: position,
-        anchor: Anchor.center,
-        paint: Paint()..color = color,
-      );
+  Ball({required Vector2 position, SkinStyle? style})
+    : style = style ?? kDefaultBallStyle,
+      super(radius: kBallRadius, position: position, anchor: Anchor.center);
 
   Vector2 velocity = Vector2.zero();
   bool _bouncedThisFrame = false;
+
+  final SkinStyle style;
+
+  @override
+  void render(Canvas canvas) {
+    paintBall(canvas, Offset(radius, radius), radius, style);
+  }
 
   @override
   Future<void> onLoad() async {

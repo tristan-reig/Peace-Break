@@ -51,10 +51,10 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
   Future<void> onLoad() async {
     camera.viewfinder.anchor = Anchor.topLeft;
 
-    paddle = Paddle(color: paddleColor(skins.paddle));
+    paddle = Paddle(style: paddleStyle(skins.paddle));
     ball = Ball(
       position: Vector2(kGameWidth / 2, kPaddleY - 40),
-      color: ballColor(skins.ball),
+      style: ballStyle(skins.ball),
     );
 
     world.addAll([PlayArea(), paddle, ball]);

@@ -4,6 +4,7 @@ import '../../core/theme.dart';
 import '../../models/shop_item.dart';
 import '../../services/inventory_service.dart';
 import '../game/skins.dart';
+import '../game/widgets/skin_preview.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -14,6 +15,8 @@ class InventoryScreen extends StatefulWidget {
 class _InventoryScreenState extends State<InventoryScreen> {
   late Future<List<InventoryEntry>> _future;
   bool _busy = false;
+
+  InventoryEntry? _selected;
 
   @override
   void initState() {
@@ -36,6 +39,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       } else {
         await InventoryService().equip(entry.item);
       }
+      _selected = null;
       _reload();
     } catch (_) {
       messenger.showSnackBar(
@@ -86,79 +90,141 @@ class _InventoryScreenState extends State<InventoryScreen> {
             );
           }
 
-          final paddles = entries
-              .where((e) => e.item.kind == ItemKind.paddleSkin)
-              .toList();
-          final balls = entries
-              .where((e) => e.item.kind == ItemKind.ballSkin)
-              .toList();
+          final equippedPaddle = entries
+              .where((e) => e.equipped && e.item.kind == ItemKind.paddleSkin)
+              .firstOrNull;
+          final equippedBall = entries
+              .where((e) => e.equipped && e.item.kind == ItemKind.ballSkin)
+              .firstOrNull;
 
-          return ListView(
-            padding: const EdgeInsets.all(16),
+          final preview = _selected;
+          final showPaddle = preview?.item.kind == ItemKind.paddleSkin
+              ? preview!.item.id
+              : equippedPaddle?.item.id;
+          final showBall = preview?.item.kind == ItemKind.ballSkin
+              ? preview!.item.id
+              : equippedBall?.item.id;
+
+          return Column(
             children: [
-              if (paddles.isNotEmpty) ...[
-                const _SectionTitle('Raquettes'),
-                ...paddles.map(_tile),
-                const SizedBox(height: 24),
-              ],
-              if (balls.isNotEmpty) ...[
-                const _SectionTitle('Balles'),
-                ...balls.map(_tile),
-              ],
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    SkinScene(
+                      paddle: paddleStyle(showPaddle),
+                      ball: ballStyle(showBall),
+                      showPaddle:
+                          preview == null ||
+                          preview.item.kind == ItemKind.paddleSkin,
+                      showBall:
+                          preview == null ||
+                          preview.item.kind == ItemKind.ballSkin,
+                    ),
+                    const SizedBox(height: 12),
+                    if (preview == null)
+                      const Text(
+                        'Choisis un objet pour le prévisualiser',
+                        style: TextStyle(fontSize: 13, color: Colors.white54),
+                      )
+                    else ...[
+                      Text(
+                        preview.item.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        preview.equipped ? 'Équipé' : 'Non équipé',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: preview.equipped
+                              ? Colors.lightGreenAccent
+                              : Colors.white54,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      preview.equipped
+                          ? OutlinedButton(
+                              onPressed: _busy ? null : () => _toggle(preview),
+                              child: const Text('Retirer'),
+                            )
+                          : FilledButton(
+                              onPressed: _busy ? null : () => _toggle(preview),
+                              child: const Text('Équiper'),
+                            ),
+                    ],
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                  ),
+                  itemCount: entries.length,
+                  itemBuilder: (context, index) {
+                    final entry = entries[index];
+                    final isBall = entry.item.kind == ItemKind.ballSkin;
+                    final isSelected = _selected?.item.id == entry.item.id;
+
+                    return Material(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.circular(12),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => setState(() => _selected = entry),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: entry.equipped
+                                  ? Colors.lightGreenAccent
+                                  : (isSelected
+                                        ? AppTheme.accent
+                                        : Colors.white24),
+                              width: entry.equipped || isSelected ? 2.5 : 1,
+                            ),
+                          ),
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: SkinThumb(
+                                  style: isBall
+                                      ? ballStyle(entry.item.id)
+                                      : paddleStyle(entry.item.id),
+                                  isBall: isBall,
+                                  size: 44,
+                                ),
+                              ),
+                              if (entry.equipped)
+                                const Positioned(
+                                  top: 3,
+                                  right: 3,
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    size: 15,
+                                    color: Colors.lightGreenAccent,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           );
         },
       ),
     );
   }
-
-  Widget _tile(InventoryEntry entry) {
-    final isBall = entry.item.kind == ItemKind.ballSkin;
-    final color = isBall
-        ? ballColor(entry.item.id)
-        : paddleColor(entry.item.id);
-
-    return Card(
-      child: ListTile(
-        leading: Container(
-          width: 40,
-          height: isBall ? 40 : 16,
-          decoration: BoxDecoration(
-            color: color,
-            shape: isBall ? BoxShape.circle : BoxShape.rectangle,
-            borderRadius: isBall ? null : BorderRadius.circular(4),
-          ),
-        ),
-        title: Text(entry.item.name),
-        subtitle: Text(entry.equipped ? 'Équipé' : 'Non équipé'),
-        trailing: entry.equipped
-            ? OutlinedButton(
-                onPressed: _busy ? null : () => _toggle(entry),
-                child: const Text('Retirer'),
-              )
-            : FilledButton(
-                onPressed: _busy ? null : () => _toggle(entry),
-                child: const Text('Équiper'),
-              ),
-      ),
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 8),
-    child: Text(
-      text,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: AppTheme.accent,
-      ),
-    ),
-  );
 }

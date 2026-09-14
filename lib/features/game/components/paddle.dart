@@ -6,13 +6,20 @@ import '../game_config.dart';
 import '../skins.dart';
 
 class Paddle extends RectangleComponent with CollisionCallbacks {
-  Paddle({Color color = kDefaultPaddleColor})
-    : super(
+  Paddle({SkinStyle? style})
+    : style = style ?? kDefaultPaddleStyle,
+      super(
         size: Vector2(kPaddleWidth, kPaddleHeight),
         position: Vector2(kGameWidth / 2, kPaddleY),
         anchor: Anchor.center,
-        paint: Paint()..color = color,
       );
+
+  final SkinStyle style;
+
+  @override
+  void render(Canvas canvas) {
+    paintPaddle(canvas, size.toRect(), style);
+  }
 
   @override
   Future<void> onLoad() async {
