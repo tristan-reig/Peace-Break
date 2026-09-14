@@ -93,4 +93,9 @@ class Ball extends CircleComponent
 
     brick.hit();
   }
+
+  void setSpeed(double speed) {
+    if (velocity.isZero()) return;
+    velocity.scaleTo(speed);
+  }
 }

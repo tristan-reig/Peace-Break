@@ -2,55 +2,90 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme.dart';
 import '../game_state.dart';
+import '../power_up.dart';
 
 class InfoBar extends StatelessWidget {
-  const InfoBar({super.key, required this.state, required this.onPause});
+  const InfoBar({
+    super.key,
+    required this.state,
+    required this.onPause,
+    required this.activePowers,
+  });
 
   final GameState state;
   final VoidCallback onPause;
+
+  final Map<PowerType, double> Function() activePowers;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: state,
-      builder: (context, _) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        color: Colors.black54,
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.pause_circle, size: 30),
-              color: AppTheme.accent,
-              onPressed: onPause,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Stage ${state.stage}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            _Timer(seconds: state.secondsLeft),
-            const Spacer(),
-            _stat(Icons.star, '${state.score}'),
-            const SizedBox(width: 12),
-            _stat(Icons.monetization_on, '${state.coins}'),
-            const SizedBox(width: 12),
-            Row(
-              children: List.generate(
-                state.lives.clamp(0, 5),
-                (_) => const Icon(
-                  Icons.favorite,
-                  size: 16,
-                  color: Colors.redAccent,
-                ),
+      builder: (context, _) {
+        final powers = activePowers();
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          color: Colors.black54,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.pause_circle, size: 30),
+                    color: AppTheme.accent,
+                    onPressed: onPause,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Stage ${state.stage}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 12),
+                  _Timer(seconds: state.secondsLeft),
+                  const Spacer(),
+                  _stat(Icons.star, '${state.score}'),
+                  const SizedBox(width: 12),
+                  _stat(Icons.monetization_on, '${state.coins}'),
+                  const SizedBox(width: 12),
+                  _Lives(lives: state.lives),
+                ],
               ),
-            ),
-            if (state.lives > 5)
-              Text(' x${state.lives}', style: const TextStyle(fontSize: 12)),
-          ],
-        ),
-      ),
+              const SizedBox(height: 6),
+              SizedBox(
+                height: 20,
+                child: powers.isEmpty
+                    ? null
+                    : Row(
+                        children: powers.entries.map((entry) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  entry.key.icon,
+                                  size: 14,
+                                  color: entry.key.color,
+                                ),
+                                const SizedBox(width: 3),
+                                Text(
+                                  '${entry.value.ceil()}s',
+                                  style: const TextStyle(fontSize: 11),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -92,6 +127,33 @@ class _Timer extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _Lives extends StatelessWidget {
+  const _Lives({required this.lives});
+  final int lives;
+
+  @override
+  Widget build(BuildContext context) {
+    if (lives > 5) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.favorite, size: 16, color: Colors.redAccent),
+          const SizedBox(width: 3),
+          Text('×$lives', style: const TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(
+        lives.clamp(0, 5),
+        (_) => const Icon(Icons.favorite, size: 16, color: Colors.redAccent),
+      ),
     );
   }
 }

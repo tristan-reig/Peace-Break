@@ -87,7 +87,11 @@ class _GameScreenState extends State<GameScreen> {
         body: SafeArea(
           child: Column(
             children: [
-              InfoBar(state: _state, onPause: _game.togglePause),
+              InfoBar(
+                state: _state,
+                onPause: _game.togglePause,
+                activePowers: () => _game.activePowers,
+              ),
               Expanded(
                 child: GameWidget(
                   game: _game,

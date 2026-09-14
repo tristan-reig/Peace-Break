@@ -23,7 +23,6 @@ class GameState extends ChangeNotifier {
 
   void startTimer(double seconds) {
     timeLeft = seconds;
-    notifyListeners();
   }
 
   bool tick(double dt) {
@@ -62,4 +61,6 @@ class GameState extends ChangeNotifier {
     lives++;
     notifyListeners();
   }
+
+  void notifyPowers() => notifyListeners();
 }

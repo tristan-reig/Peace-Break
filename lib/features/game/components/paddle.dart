@@ -22,4 +22,14 @@ class Paddle extends RectangleComponent with CollisionCallbacks {
     final half = size.x / 2;
     position.x = x.clamp(half, kGameWidth - half);
   }
+
+  void resizeTo(double width) {
+    final center = position.x;
+    size = Vector2(width, kPaddleHeight);
+    for (final hitbox in children.whereType<RectangleHitbox>()) {
+      hitbox.size = Vector2(width, kPaddleHeight);
+      hitbox.position = Vector2.zero();
+    }
+    moveTo(center);
+  }
 }

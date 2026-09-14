@@ -20,3 +20,7 @@ const double kBrickWidth =
 
 const int kPointsPerSecondLeft = 20;
 const int kPointsPerLifeLeft = 500;
+
+const double kPaddleWideWidth = 140;
+const double kPaddleNarrowWidth = 56;
+const double kBallFastSpeed = 470;

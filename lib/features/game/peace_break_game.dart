@@ -2,13 +2,17 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import 'dart:math';
+
 import 'components/ball.dart';
 import 'components/brick.dart';
 import 'components/paddle.dart';
 import 'components/play_area.dart';
+import 'components/power_capsule.dart';
 import 'game_config.dart';
 import 'game_state.dart';
 import 'levels.dart';
+import 'power_up.dart';
 
 class PeaceBreakGame extends FlameGame with HasCollisionDetection {
   PeaceBreakGame({required this.state})
@@ -30,6 +34,11 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
 
   String loseReason = '';
   VoidCallback? onWin;
+
+  final _random = Random();
+
+  final Map<PowerType, double> _activePowers = {};
+  Map<PowerType, double> get activePowers => Map.unmodifiable(_activePowers);
 
   @override
   Color backgroundColor() => const Color(0xFF101018);
@@ -53,6 +62,17 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
     super.update(dt);
     if (_over) return;
     if (state.tick(dt)) _lose('Temps écoulé');
+
+    if (_activePowers.isNotEmpty) {
+      for (final type in _activePowers.keys.toList()) {
+        final left = _activePowers[type]! - dt;
+        if (left <= 0) {
+          _expirePower(type);
+        } else {
+          _activePowers[type] = left;
+        }
+      }
+    }
   }
 
   void _buildWall() {
@@ -87,8 +107,15 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
 
   void onBrickDestroyed(Brick brick) {
     state.rewardBrick(brick.initialHitPoints);
+    _maybeDropPower(brick.absoluteCenter);
     _remainingBricks--;
     if (_remainingBricks <= 0) _win();
+  }
+
+  void _maybeDropPower(Vector2 at) {
+    if (_random.nextDouble() > kDropChance) return;
+    final type = PowerType.values[_random.nextInt(PowerType.values.length)];
+    world.add(PowerCapsule(position: at.clone(), type: type));
   }
 
   void onBallLost() {
@@ -136,5 +163,37 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
       pauseEngine();
       overlays.add('paused');
     }
+  }
+
+  void applyPower(PowerType type) {
+    switch (type) {
+      case PowerType.extraLife:
+        state.gainLife();
+        return;
+      case PowerType.widerPaddle:
+        paddle.resizeTo(kPaddleWideWidth);
+        _activePowers.remove(PowerType.narrowerPaddle);
+      case PowerType.narrowerPaddle:
+        paddle.resizeTo(kPaddleNarrowWidth);
+        _activePowers.remove(PowerType.widerPaddle);
+      case PowerType.fasterBall:
+        ball.setSpeed(kBallFastSpeed);
+    }
+    _activePowers[type] = kPowerDuration;
+    state.notifyPowers();
+  }
+
+  void _expirePower(PowerType type) {
+    _activePowers.remove(type);
+    switch (type) {
+      case PowerType.widerPaddle:
+      case PowerType.narrowerPaddle:
+        paddle.resizeTo(kPaddleWidth);
+      case PowerType.fasterBall:
+        ball.setSpeed(kBallSpeed);
+      case PowerType.extraLife:
+        break;
+    }
+    state.notifyPowers();
   }
 }
