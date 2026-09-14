@@ -45,7 +45,7 @@ class PeaceBreakGame extends FlameGame with HasCollisionDetection {
   Map<PowerType, double> get activePowers => Map.unmodifiable(_activePowers);
 
   @override
-  Color backgroundColor() => const Color(0xFF101018);
+  Color backgroundColor() => const Color(0xFF060A06);
 
   @override
   Future<void> onLoad() async {

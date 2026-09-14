@@ -26,31 +26,40 @@ class InfoBar extends StatelessWidget {
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          color: Colors.black54,
+          decoration: const BoxDecoration(
+            color: Color(0xCC000000),
+            border: Border(
+              bottom: BorderSide(color: AppTheme.greenDim, width: 2),
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.pause_circle, size: 30),
-                    color: AppTheme.accent,
+                    icon: const Icon(Icons.pause_circle, size: 28),
+                    color: AppTheme.green,
                     onPressed: onPause,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Text(
-                    'Stage ${state.stage}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    'ST.${state.stage.toString().padLeft(2, '0')}',
+                    style: const TextStyle(
+                      fontFamily: AppTheme.titleFont,
+                      fontSize: 9,
+                      color: AppTheme.green,
+                    ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   _Timer(seconds: state.secondsLeft),
                   const Spacer(),
                   _stat(Icons.star, '${state.score}'),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   _stat(Icons.monetization_on, '${state.coins}'),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   _Lives(lives: state.lives),
                 ],
               ),
@@ -74,7 +83,12 @@ class InfoBar extends StatelessWidget {
                                 const SizedBox(width: 3),
                                 Text(
                                   '${entry.value.ceil()}s',
-                                  style: const TextStyle(fontSize: 11),
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontFeatures: [
+                                      FontFeature.tabularFigures(),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -92,9 +106,17 @@ class InfoBar extends StatelessWidget {
   Widget _stat(IconData icon, String value) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, size: 16, color: AppTheme.accent),
+      Icon(icon, size: 15, color: AppTheme.amber),
       const SizedBox(width: 3),
-      Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+      Text(
+        value.padLeft(5, '0'),
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 13,
+          color: AppTheme.text,
+          fontFeatures: [FontFeature.tabularFigures()],
+        ),
+      ),
     ],
   );
 }
@@ -106,24 +128,22 @@ class _Timer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final urgent = seconds <= 10;
+    final color = urgent ? AppTheme.magenta : AppTheme.text;
     final m = (seconds ~/ 60).toString();
     final s = (seconds % 60).toString().padLeft(2, '0');
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          Icons.timer,
-          size: 16,
-          color: urgent ? Colors.redAccent : Colors.white70,
-        ),
+        Icon(Icons.timer, size: 15, color: color),
         const SizedBox(width: 3),
         Text(
           '$m:$s',
           style: TextStyle(
             fontWeight: FontWeight.bold,
+            fontSize: 13,
             fontFeatures: const [FontFeature.tabularFigures()],
-            color: urgent ? Colors.redAccent : null,
+            color: color,
           ),
         ),
       ],
@@ -141,9 +161,16 @@ class _Lives extends StatelessWidget {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.favorite, size: 16, color: Colors.redAccent),
+          const Icon(Icons.favorite, size: 15, color: AppTheme.magenta),
           const SizedBox(width: 3),
-          Text('×$lives', style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            '×$lives',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              color: AppTheme.text,
+            ),
+          ),
         ],
       );
     }
@@ -152,7 +179,10 @@ class _Lives extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: List.generate(
         lives.clamp(0, 5),
-        (_) => const Icon(Icons.favorite, size: 16, color: Colors.redAccent),
+        (_) => const Padding(
+          padding: EdgeInsets.only(left: 1),
+          child: Icon(Icons.favorite, size: 15, color: AppTheme.magenta),
+        ),
       ),
     );
   }

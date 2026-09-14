@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme.dart';
 import '../../core/validators.dart';
 import '../../services/auth_service.dart';
 
@@ -106,11 +107,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: _loading ? null : _submit,
                   child: _loading
                       ? const SizedBox(
-                          height: 22,
-                          width: 22,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppTheme.bg,
+                          ),
                         )
-                      : const Text("S'inscrire"),
+                      : const Text('CREER'),
                 ),
               ],
             ),

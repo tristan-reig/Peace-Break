@@ -4,6 +4,9 @@ import '../../core/routes.dart';
 import '../../core/validators.dart';
 import '../../services/auth_service.dart';
 
+import '../../core/theme.dart';
+import '../../core/widgets/arcade.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
   @override
@@ -51,62 +54,102 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'Peace Break',
-                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                  const ArcadeTitle('Peace', size: 30),
+                  const ArcadeTitle('Break', size: 30, color: AppTheme.amber),
+                  const SizedBox(height: 8),
+                  Text(
+                    '// insert coin //',
+                    style: TextStyle(
+                      fontFamily: AppTheme.titleFont,
+                      fontSize: 8,
+                      color: AppTheme.textDim,
+                    ),
                   ),
                   const SizedBox(height: 40),
-                  TextFormField(
-                    controller: _identifier,
-                    decoration: const InputDecoration(
-                      labelText: 'Pseudo ou email',
+
+                  ArcadeFrame(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _identifier,
+                          decoration: const InputDecoration(
+                            labelText: 'PSEUDO OU EMAIL',
+                          ),
+                          autocorrect: false,
+                          textInputAction: TextInputAction.next,
+                          validator: Validators.identifier,
+                        ),
+                        const SizedBox(height: 18),
+                        TextFormField(
+                          controller: _password,
+                          decoration: const InputDecoration(
+                            labelText: 'MOT DE PASSE',
+                          ),
+                          obscureText: true,
+                          onFieldSubmitted: (_) => _submit(),
+                          validator: (v) => (v == null || v.isEmpty)
+                              ? 'Mot de passe requis'
+                              : null,
+                        ),
+                        if (_error != null) ...[
+                          const SizedBox(height: 18),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppTheme.magenta,
+                                width: 2,
+                              ),
+                            ),
+                            child: Text(
+                              _error!.toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppTheme.magenta,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 26),
+                        ElevatedButton(
+                          onPressed: _loading ? null : _submit,
+                          child: _loading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppTheme.bg,
+                                  ),
+                                )
+                              : const Text('START'),
+                        ),
+                      ],
                     ),
-                    autocorrect: false,
-                    textInputAction: TextInputAction.next,
-                    validator: Validators.identifier,
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _password,
-                    decoration: const InputDecoration(
-                      labelText: 'Mot de passe',
-                    ),
-                    obscureText: true,
-                    onFieldSubmitted: (_) => _submit(),
-                    validator: (v) =>
-                        (v == null || v.isEmpty) ? 'Mot de passe requis' : null,
-                  ),
-                  if (_error != null) ...[
-                    const SizedBox(height: 16),
-                    Text(
-                      _error!,
-                      style: const TextStyle(color: Colors.redAccent),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+
                   const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _loading ? null : _submit,
-                    child: _loading
-                        ? const SizedBox(
-                            height: 22,
-                            width: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Connexion'),
-                  ),
-                  const SizedBox(height: 12),
                   TextButton(
                     onPressed: _loading
                         ? null
                         : () => Navigator.pushNamed(context, Routes.register),
-                    child: const Text('Pas de compte ? Inscris-toi'),
+                    child: const BlinkingText(
+                      'NOUVEAU JOUEUR ?',
+                      style: TextStyle(
+                        fontFamily: AppTheme.titleFont,
+                        fontSize: 9,
+                        color: AppTheme.amber,
+                      ),
+                    ),
                   ),
                 ],
               ),

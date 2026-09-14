@@ -21,12 +21,14 @@ class SkinStyle {
 }
 
 const kDefaultPaddleStyle = SkinStyle(
-  colors: [Color(0xFFD08BEB), Color(0xFF8E3FB8)],
-  stroke: Color(0x55FFFFFF),
+  colors: [Color(0xFF7DFFA8), Color(0xFF1F9E4D)],
+  pattern: SkinPattern.neon,
+  glow: Color(0xFF3DFF7A),
 );
 
 const kDefaultBallStyle = SkinStyle(
-  colors: [Color(0xFF9BE6FF), Color(0xFF1E88C7)],
+  colors: [Color(0xFFFFE9B0), Color(0xFFFFB000)],
+  glow: Color(0xFFFFB000),
 );
 
 const Map<String, SkinStyle> kSkinStyles = {

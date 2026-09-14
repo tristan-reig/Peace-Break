@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/routes.dart';
 import 'core/theme.dart';
+import 'core/widgets/crt_overlay.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/game/game_screen.dart';
@@ -22,6 +23,7 @@ class PeaceBreakApp extends StatelessWidget {
       title: 'Peace Break',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
+      builder: (context, child) => CrtOverlay(child: child!),
       home: const AuthGate(),
       routes: {
         Routes.login: (_) => const LoginScreen(),

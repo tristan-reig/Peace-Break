@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/routes.dart';
 import '../../core/theme.dart';
+import '../../core/widgets/arcade.dart';
 import '../../services/profile_controller.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -15,9 +16,9 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => context.read<ProfileController>().load(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<ProfileController>().load();
+    });
   }
 
   @override
@@ -31,16 +32,8 @@ class _MenuScreenState extends State<MenuScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             children: [
-              const Text(
-                'Peace Break',
-                style: TextStyle(
-                  fontSize: 38,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.accent,
-                  letterSpacing: 1.5,
-                ),
-              ),
-              const SizedBox(height: 20),
+              const ArcadeTitle('Peace Break', size: 20),
+              const SizedBox(height: 22),
 
               if (controller.loading && profile == null)
                 const Expanded(
@@ -52,11 +45,15 @@ class _MenuScreenState extends State<MenuScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(controller.error!),
+                        Text(
+                          controller.error!.toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: AppTheme.magenta),
+                        ),
                         const SizedBox(height: 16),
-                        TextButton(
+                        OutlinedButton(
                           onPressed: controller.load,
-                          child: const Text('Réessayer'),
+                          child: const Text('REESSAYER'),
                         ),
                       ],
                     ),
@@ -73,35 +70,39 @@ class _MenuScreenState extends State<MenuScreen> {
                   stage: profile.nextStage,
                   maxLives: profile.maxLives,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const [
-                    _IconTile(
+                  children: [
+                    ArcadeTile(
                       icon: Icons.storefront,
-                      label: 'Boutique',
-                      route: Routes.shop,
+                      label: 'Shop',
+                      color: AppTheme.amber,
+                      onTap: () => Navigator.pushNamed(context, Routes.shop),
                     ),
-                    _IconTile(
-                      icon: Icons.backpack,
-                      label: 'Inventaire',
-                      route: Routes.inventory,
+                    ArcadeTile(
+                      icon: Icons.inventory_2,
+                      label: 'Items',
+                      onTap: () =>
+                          Navigator.pushNamed(context, Routes.inventory),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 18),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const [
-                    _IconTile(
+                  children: [
+                    ArcadeTile(
                       icon: Icons.grid_view,
                       label: 'Stages',
-                      route: Routes.stages,
+                      onTap: () => Navigator.pushNamed(context, Routes.stages),
                     ),
-                    _IconTile(
-                      icon: Icons.emoji_events,
+                    ArcadeTile(
+                      icon: Icons.leaderboard,
                       label: 'Top 10',
-                      route: Routes.leaderboard,
+                      color: AppTheme.cyan,
+                      onTap: () =>
+                          Navigator.pushNamed(context, Routes.leaderboard),
                     ),
                   ],
                 ),
@@ -109,7 +110,8 @@ class _MenuScreenState extends State<MenuScreen> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(
-                    icon: const Icon(Icons.settings, size: 30),
+                    icon: const Icon(Icons.settings, size: 28),
+                    color: AppTheme.textDim,
                     tooltip: 'Réglages',
                     onPressed: () =>
                         Navigator.pushNamed(context, Routes.settings),
@@ -137,64 +139,48 @@ class _StatsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                username,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+    return ArcadeFrame(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.person, size: 16, color: AppTheme.green),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  username.toUpperCase(),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: AppTheme.titleFont,
+                    fontSize: 10,
+                    color: AppTheme.green,
+                  ),
                 ),
               ),
-            ),
-            _stat(Icons.star, '$totalScore'),
-            const SizedBox(width: 16),
-            _stat(Icons.monetization_on, '$coins'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _stat(IconData icon, String value) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(icon, size: 18, color: AppTheme.accent),
-      const SizedBox(width: 4),
-      Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-    ],
-  );
-}
-
-class _PlayButton extends StatelessWidget {
-  const _PlayButton({required this.stage, required this.maxLives});
-  final int stage;
-  final int maxLives;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(72),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-      onPressed: () => Navigator.pushNamed(
-        context,
-        Routes.game,
-        arguments: {'stage': stage, 'maxLives': maxLives},
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('JOUER', style: TextStyle(fontSize: 24)),
-          Text(
-            'Stage $stage',
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+            ],
+          ),
+          const SizedBox(height: 10),
+          const Divider(height: 1),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: _Counter(
+                  label: 'SCORE',
+                  value: totalScore,
+                  color: AppTheme.green,
+                ),
+              ),
+              Container(width: 2, height: 32, color: AppTheme.greenDim),
+              Expanded(
+                child: _Counter(
+                  label: 'COINS',
+                  value: coins,
+                  color: AppTheme.amber,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -202,43 +188,92 @@ class _PlayButton extends StatelessWidget {
   }
 }
 
-class _IconTile extends StatelessWidget {
-  const _IconTile({
-    required this.icon,
+class _Counter extends StatelessWidget {
+  const _Counter({
     required this.label,
-    required this.route,
+    required this.value,
+    required this.color,
   });
 
-  final IconData icon;
   final String label;
-  final String route;
+  final int value;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Material(
-          color: Colors.white10,
-          borderRadius: BorderRadius.circular(20),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () => Navigator.pushNamed(context, route),
-            child: Container(
-              width: 96,
-              height: 96,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppTheme.accent, width: 2),
-              ),
-              child: Icon(icon, size: 44, color: AppTheme.accent),
-            ),
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: AppTheme.titleFont,
+            fontSize: 7,
+            color: AppTheme.textDim,
           ),
         ),
         const SizedBox(height: 6),
-        Text(label, style: const TextStyle(fontSize: 13)),
+        Text(
+          value.toString().padLeft(6, '0'),
+          style: AppTheme.title(13, color: color),
+        ),
       ],
+    );
+  }
+}
+
+class _PlayButton extends StatelessWidget {
+  const _PlayButton({required this.stage, required this.maxLives});
+
+  final int stage;
+  final int maxLives;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => Navigator.pushNamed(
+          context,
+          Routes.game,
+          arguments: {'stage': stage, 'maxLives': maxLives},
+        ),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          decoration: BoxDecoration(
+            color: AppTheme.panel,
+            border: Border.all(color: AppTheme.green, width: 3),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.green.withValues(alpha: 0.3),
+                blurRadius: 20,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const BlinkingText(
+                'PRESS START',
+                style: TextStyle(
+                  fontFamily: AppTheme.titleFont,
+                  fontSize: 16,
+                  color: AppTheme.green,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'STAGE ${stage.toString().padLeft(2, '0')}',
+                style: const TextStyle(
+                  fontFamily: AppTheme.titleFont,
+                  fontSize: 8,
+                  color: AppTheme.textDim,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
