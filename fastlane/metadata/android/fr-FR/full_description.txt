@@ -1,0 +1,17 @@
+Peace Break est un casse-briques à l'esthétique de borne d'arcade.
+
+Renvoyez la balle avec votre raquette pour venir à bout de dix niveaux
+de difficulté croissante. Chaque niveau a son propre temps imparti :
+plus vous le terminez vite, meilleur est votre score. Conservez vos
+vies pour obtenir un bonus supplémentaire.
+
+Fonctionnalités :
+
+* Dix niveaux conçus à la main
+* Bonus et malus à attraper pendant la partie
+* Des pièces à dépenser en skins de raquette et de balle
+* Classement en ligne
+* Progression synchronisée entre appareils via votre compte
+
+Un compte est nécessaire pour jouer, les scores et la progression étant
+stockés en ligne.

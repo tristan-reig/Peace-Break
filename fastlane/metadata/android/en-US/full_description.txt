@@ -1,0 +1,16 @@
+Peace Break is a brick breaker game with a CRT arcade look.
+
+Bounce the ball off your paddle to clear ten levels of increasing
+difficulty. Each level has its own time limit: the faster you clear it,
+the higher your score. Keep your lives to earn an extra bonus.
+
+Features:
+
+* Ten hand-crafted levels
+* Power-ups and power-downs to catch mid-game
+* Coins to spend on paddle and ball skins
+* Online leaderboard
+* Progress synced across devices via your account
+
+An account is required to play, as scores and progress are stored
+online.
