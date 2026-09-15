@@ -42,4 +42,4 @@ enum PowerType {
 enum PowerGlyph { heart, expand, shrink, bolt }
 
 const double kPowerDuration = 8;
-const double kDropChance = 1;
+const double kDropChance = 0.22;
