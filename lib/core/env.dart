@@ -1,15 +1,16 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+/// Configuration Supabase.
+///
+/// Pour compiler contre une autre instance :
+///   flutter build apk --dart-define=SUPABASE_URL=... \
+///                     --dart-define=SUPABASE_PUBLISHABLE_KEY=...
 class Env {
-  static String get supabaseUrl => _require('SUPABASE_URL');
-  static String get supabasePublishableKey =>
-      _require('SUPABASE_PUBLISHABLE_KEY');
+  static const supabaseUrl = String.fromEnvironment(
+    'SUPABASE_URL',
+    defaultValue: 'https://onndvxwytuqgctzasloa.supabase.co',
+  );
 
-  static String _require(String key) {
-    final value = dotenv.env[key];
-    if (value == null || value.isEmpty) {
-      throw StateError('Variable manquante dans .env : $key');
-    }
-    return value;
-  }
+  static const supabasePublishableKey = String.fromEnvironment(
+    'SUPABASE_PUBLISHABLE_KEY',
+    defaultValue: 'sb_publishable_Sd79DOqTst3v28TU_j_NJA_BAwkrUDK',
+  );
 }
